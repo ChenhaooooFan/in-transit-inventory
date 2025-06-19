@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 
@@ -15,8 +14,8 @@ if on_hand_file and in_transit_file:
     in_transit_df = pd.read_csv(in_transit_file)
 
     # 清洗在仓数据
-    on_hand_cleaned = on_hand_df[['SKU编码', '06/18']].dropna()
-    on_hand_cleaned.columns = ['SKU', 'In_stock']
+    on_hand_cleaned = on_hand_df[['产品名称', 'SKU编码', '06/18']].dropna()
+    on_hand_cleaned.columns = ['Name', 'SKU', 'In_stock']
 
     # 清洗在途数据（按 SKU 拆解）
     in_transit_long = []
@@ -24,21 +23,23 @@ if on_hand_file and in_transit_file:
         base_name = row['英文名称']
         for size in ['S', 'M', 'L']:
             sku = None
-            # 尝试用英文名 + size 推出 SKU
             if base_name and isinstance(base_name, str):
                 name_parts = base_name.split()
                 code_part = ''.join([word[0] for word in name_parts[:2]]).upper()
                 sku = f"NP{code_part}001-{size}"
             qty = row[f'{size}数量']
-            in_transit_long.append({'SKU': sku, 'On_the_way': qty})
+            in_transit_long.append({'Name': base_name, 'SKU': sku, 'On_the_way': qty})
 
     in_transit_df_flat = pd.DataFrame(in_transit_long)
 
     # 合并
-    combined_df = pd.merge(on_hand_cleaned, in_transit_df_flat, on='SKU', how='outer').fillna(0)
+    combined_df = pd.merge(on_hand_cleaned, in_transit_df_flat, on='SKU', how='outer')
+    combined_df['Name_x'] = combined_df['Name_x'].fillna(combined_df['Name_y'])
+    combined_df = combined_df.rename(columns={'Name_x': 'Name'})
+    combined_df = combined_df[['Name', 'SKU', 'In_stock', 'On_the_way']]
+    combined_df = combined_df.fillna(0)
     combined_df['In_stock'] = combined_df['In_stock'].astype(int)
     combined_df['On_the_way'] = combined_df['On_the_way'].astype(int)
-    combined_df['Total'] = combined_df['In_stock'] + combined_df['On_the_way']
 
     st.success("✅ 合并完成！请在下方查看：")
     st.dataframe(combined_df)
