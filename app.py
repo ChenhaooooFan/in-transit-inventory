@@ -14,7 +14,7 @@ if on_hand_file and in_transit_file:
     in_transit_df = pd.read_csv(in_transit_file)
 
     # 清洗在仓数据
-    on_hand_cleaned = on_hand_df[['产品名称', 'SKU编码', '06/18']].dropna()
+    on_hand_cleaned = on_hand_df[['产品名称', 'SKU编码', '06/20']].dropna()
     on_hand_cleaned.columns = ['Name', 'SKU', 'In_stock']
 
     # 清洗在途数据（按 SKU 拆解）
