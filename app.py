@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="📦 NailVesta 在仓+在途库存合并工具", layout="centered")
-st.title("📦 NailVesta 在仓 + 在途 库存合并工具")
+st.set_page_config(page_title="📦 ColofFour LLC 在仓+在途库存合并工具", layout="centered")
+st.title("📦 ColofFour LLC  在仓 + 在途 库存合并工具")
 st.caption("上传你的在仓库存和在途库存，我将为你自动生成整合结果～")
 
 # 上传文件
